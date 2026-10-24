@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lexicon">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0b1220">
+<title>Lexicon Master Suite</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#111a2e;--panel2:#18233c;--line:#25324f;--tx:#e6ebf5;--mut:#8b9ab8;--ac:#6366f1;--ac2:#a5b4fc;--ok:#34d399;--bad:#f87171;--warn:#fbbf24;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:680px;margin:0 auto;padding:18px 16px 110px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px;margin-bottom:18px}
+h1{font-size:1.35rem;margin:0;letter-spacing:-.01em}
+h2{font-size:1.1rem;margin:0 0 12px}
+#stats{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;color:var(--mut);font-size:.88rem}
+#stats b{color:var(--tx);font-weight:650}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+label{display:block;font-size:.9rem;color:var(--mut);margin-bottom:14px}
+input,textarea{display:block;width:100%;margin-top:6px;padding:11px 12px;font:inherit;font-size:16px;color:var(--tx);background:var(--bg);border:1px solid var(--line);border-radius:10px;resize:vertical}
+input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.mut{color:var(--mut)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:600;color:#fff;background:var(--ac);border:0;border-radius:10px;padding:12px 18px;min-height:46px;cursor:pointer}
+.btn.ghost{background:var(--panel2);color:var(--tx);border:1px solid var(--line)}
+.btn.sm{padding:6px 12px;min-height:36px;font-size:.88rem}
+.btn.bad{background:var(--bad);color:#2a0a0a}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.chip{font:inherit;font-size:.84rem;color:var(--ac2);background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:5px 12px;min-height:34px;cursor:pointer}
+.chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+.item h3{margin:0 0 4px;font-size:1.05rem}
+.item p{margin:0 0 6px}
+.trig{color:var(--mut);font-style:italic;font-size:.92rem}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.tag{font-size:.78rem;color:var(--ac2);background:var(--panel2);border-radius:99px;padding:2px 10px}
+.sp{flex:1}
+.card{perspective:1100px;margin:6px 0 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.inner{position:relative;min-height:300px;transition:transform .45s;transform-style:preserve-3d}
+.card.flip .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:auto;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.back{transform:rotateY(180deg);background:var(--panel2);border-color:var(--ac)}
+.big{font-size:2.1rem;font-weight:700;letter-spacing:-.02em;overflow-wrap:anywhere}
+.scn{font-size:1.2rem;line-height:1.45}
+.hint{margin-top:18px;color:var(--mut);font-size:.85rem}
+.grades{display:none;grid-template-columns:repeat(5,1fr);gap:8px}
+.grades.on{display:grid}
+.g{font:inherit;color:var(--tx);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 2px;min-height:62px;cursor:pointer}
+.g b{display:block;font-size:1.25rem}
+.g span{font-size:.72rem;color:var(--mut)}
+.g:active{background:var(--ac)}
+nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{font:inherit;font-size:.9rem;color:var(--mut);background:none;border:0;padding:12px 4px;min-height:56px;cursor:pointer}
+nav button.on{color:var(--ac2);box-shadow:inset 0 2px 0 var(--ac)}
+#toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ok);color:#052e1d;padding:9px 16px;border-radius:99px;font-weight:600;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+.note{background:#3b2a05;color:var(--warn);border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:.88rem}
+details{margin-top:22px}
+summary{cursor:pointer;color:var(--mut);padding:8px 0}
+.empty{text-align:center;padding:36px 12px}
+.qc{text-align:center;padding:26px 18px;margin-bottom:14px}
+.opts{display:grid;gap:10px;margin-bottom:14px}
+.opt{font:inherit;text-align:left;color:var(--tx);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:54px;cursor:pointer}
+.opt:disabled{color:var(--tx);opacity:1;cursor:default}
+.opt b{color:var(--ac2);margin-right:8px}
+.opt.ok{border-color:var(--ok);background:#0f2a22}
+.opt.bad{border-color:var(--bad);background:#2a1216}
+.fb{margin-top:14px}.fb p{margin:8px 0}
+.okp{border-color:var(--ok)}.badp{border-color:var(--bad)}
+.gh{margin:22px 0 10px;text-transform:capitalize}
+.pk{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);color:var(--tx);font-size:1rem;margin:0}
+.pk input{width:22px;height:22px;margin:2px 0 0;flex:none}
+@media (prefers-reduced-motion:reduce){.inner{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>Lexicon Master Suite</h1><div id="stats"></div></header>
+  <div id="warn"></div>
+  <main id="main"></main>
+</div>
+<nav>
+  <button data-act="tab" data-v="study">◉ Study</button>
+  <button data-act="tab" data-v="log">✎ Log</button>
+  <button data-act="tab" data-v="vault">☰ Vault</button>
+  <button data-act="tab" data-v="disc">✦ Discover</button>
+</nav>
+<div id="toast"></div>
+<script>
+let KEY=null;
+let S={words:[],days:[],skip:[]},storeOK=true;
+let tab='study',editId=null,vq='',vtag='',card=null,lastId=null,ahead=false,confirmId=null,flipped=false;
+
+function load(){try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);if(o&&Array.isArray(o.words))S=Object.assign({words:[],days:[],skip:[]},o)}}catch(e){storeOK=false}}
+function save(){if(!KEY)return;S.u=Date.now();push();try{localStorage.setItem(KEY,JSON.stringify(S));storeOK=true}catch(e){storeOK=false}$('#warn').innerHTML=storeOK?'':'<div class="note">This browser isn’t saving data. Use Backup in the Vault tab to keep a copy of your words.</div>'}
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dayKey=d=>new Date(d).toLocaleDateString('en-CA');
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function streak(){const set=new Set(S.days);const d=new Date();let n=0;if(!set.has(dayKey(d)))d.setDate(d.getDate()-1);while(set.has(dayKey(d))){n++;d.setDate(d.getDate()-1)}return n}
+function rel(t){const m=Math.round((t-Date.now())/6e4);if(m<=0)return'now';if(m<60)return'in '+m+' min';const h=Math.round(m/60);if(h<24)return'in '+h+' h';return'in '+Math.round(h/24)+' d'}
+function tags(){const s=new Set();S.words.forEach(w=>w.tags.forEach(t=>s.add(t)));return[...s].sort()}
+function due(){const n=Date.now();return S.words.filter(w=>w.due<=n).sort((a,b)=>a.due-b.due)}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1600)}
+
+function render(keep){
+  document.querySelector('nav').style.display=(user&&!admin)?'':'none';
+  if(!user||admin){$('#stats').innerHTML='';$('#main').innerHTML=admin?viewAdmin():viewLogin();if(!keep)window.scrollTo(0,0);return}
+  $('#stats').innerHTML=`<span><b>${S.words.length}</b> words</span><span><b>${due().length}</b> due</span><span><b>${streak()}</b>-day streak</span><button class="chip" data-act="switch" style="min-height:30px;padding:2px 12px">Log out</button>${isAdmin?'<button class="chip" data-act="adm" style="min-height:30px;padding:2px 12px">Admin</button>':''}`;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===tab));
+  $('#main').innerHTML=tab==='log'?viewLog():tab==='vault'?viewVault():tab==='disc'?viewDisc():viewStudy();
+  if(!keep)window.scrollTo(0,0);
+  const t=$('#ta');if(t)t.focus({preventScroll:true});
+}
+
+/* ---------- Log ---------- */
+function viewLog(){
+  const w=S.words.find(x=>x.id===editId)||{word:'',def:'',trig:'',tags:[]};
+  return `<h2>${editId?'Edit word':'Log a word'}</h2><div class="panel">
+  <label>Word<input id="fw" value="${esc(w.word)}" autocapitalize="off" autocomplete="off" spellcheck="false"></label>
+  <div class="row" style="margin:-6px 0 14px"><button class="btn ghost sm" id="lk" type="button" data-act="lookup">Look up definition</button><span class="mut" style="font-size:.82rem;align-self:center">Fills empty fields only</span></div>
+  <label>Definition<textarea id="fd" rows="3">${esc(w.def)}</textarea></label>
+  <label>Situational trigger <span class="mut">(a real moment where you’d use it)</span><textarea id="fs" rows="2">${esc(w.trig)}</textarea></label>
+  <label>Example sentence <span class="mut">(use ___ where the word goes)</span><textarea id="fe" rows="2">${esc(w.sent)}</textarea></label>
+  <div class="row"><label style="flex:1;min-width:140px">Synonym<input id="fy" value="${esc(w.syn)}" autocomplete="off" autocapitalize="off"></label><label style="flex:1;min-width:140px">Antonym<input id="fa" value="${esc(w.ant)}" autocomplete="off" autocapitalize="off"></label></div>
+  <label>Root <span class="mut">(like bene=good)</span><input id="fr" value="${esc(w.root)}" autocomplete="off" autocapitalize="off"></label>
+  <label>Tags <span class="mut">(separate with commas)</span><input id="ft" value="${esc(w.tags.join(', '))}" autocapitalize="off" autocomplete="off"></label>
+  ${tags().length?`<div class="chips">${tags().map(t=>`<button class="chip" data-act="addtag" data-v="${esc(t)}">${esc(t)}</button>`).join('')}</div>`:''}
+  <div class="row"><button class="btn" data-act="save">${editId?'Save changes':'Add word'}</button>${editId?'<button class="btn ghost" data-act="cancel">Cancel</button>':''}</div></div>`;
+}
+function saveWord(){
+  const word=$('#fw').value.trim(),def=$('#fd').value.trim(),trig=$('#fs').value.trim(),sent=$('#fe').value.trim(),syn=$('#fy').value.trim(),ant=$('#fa').value.trim(),root=$('#fr').value.replace(/\s*=\s*/,'=').trim();
+  const tg=[...new Set($('#ft').value.split(',').map(t=>t.trim().toLowerCase()).filter(Boolean))];
+  if(!word||!def){toast('Add a word and a definition');return}
+  if(sent&&!sent.includes('___')){toast('Put ___ where the word goes');return}
+  const ex=S.words.find(x=>x.id===editId);
+  if(ex){Object.assign(ex,{word,def,trig,sent,syn,ant,root,tags:tg})}
+  else S.words.push({id:uid(),word,def,trig,sent,syn,ant,root,tags:tg,ease:2.5,int:0,reps:0,due:Date.now(),created:Date.now()});
+  save();toast(ex?'Changes saved':'Word added');
+  if(ex){editId=null;tab='vault'}
+  render();
+}
+
+/* ---------- Vault ---------- */
+function listHTML(){
+  const q=vq.toLowerCase();
+  const l=S.words.filter(w=>(!vtag||w.tags.includes(vtag))&&(!q||(w.word+' '+w.def+' '+w.trig).toLowerCase().includes(q))).sort((a,b)=>a.word.localeCompare(b.word));
+  if(!l.length)return `<div class="empty mut">${S.words.length?'No words match.':'No words yet. Add your first one in the Log tab.'}</div>`;
+  return l.map(w=>`<div class="item"><h3>${esc(w.word)}</h3><p>${esc(w.def)}</p>${w.trig?`<p class="trig">${esc(w.trig)}</p>`:''}
+  <div class="meta">${w.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}<span class="sp"></span><span class="mut" style="font-size:.8rem">due ${rel(w.due)}</span>
+  <button class="btn ghost sm" data-act="edit" data-v="${w.id}">Edit</button>
+  ${confirmId===w.id?`<button class="btn bad sm" data-act="del" data-v="${w.id}">Confirm delete</button>`:`<button class="btn ghost sm" data-act="del" data-v="${w.id}">Delete</button>`}</div></div>`).join('');
+}
+function viewVault(){
+  return `<h2>Vault</h2><input id="vs" type="search" placeholder="Search words, definitions, triggers" value="${esc(vq)}" style="margin:0 0 12px">
+  <div class="chips" id="vt">${chipsHTML()}</div><div id="list">${listHTML()}</div>
+  <details><summary>Backup and restore</summary><div class="panel">
+  <p class="mut" style="margin-top:0">Export creates a copy of all your words as text. Save it in Notes or email it to yourself. To restore, paste it here and choose Import.</p>
+  <textarea id="bk" rows="5" placeholder="Backup text appears here" spellcheck="false"></textarea>
+  <div class="row" style="margin-top:12px"><button class="btn sm" data-act="export">Export</button><button class="btn ghost sm" data-act="import">Import</button></div></div></details>`;
+}
+function chipsHTML(){return tags().length?`<button class="chip ${!vtag?'on':''}" data-act="ftag" data-v="">All</button>`+tags().map(t=>`<button class="chip ${vtag===t?'on':''}" data-act="ftag" data-v="${esc(t)}">${esc(t)}</button>`).join(''):''}
+
+/* ---------- Study ---------- */
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((m,n)=>m[0]-n[0]).map(m=>m[1]);
+let q=null,dtag='',foc={tag:'',ids:[]},picking=false;
+const inFocus=w=>foc.ids.length?foc.ids.includes(w.id):(!foc.tag||w.tags.includes(foc.tag));
+const cw=()=>S.words.find(x=>x.id===(card&&card.id));
+function nextCard(){
+  let pool=(foc.tag||foc.ids.length)?S.words.filter(inFocus).sort((a,b)=>a.due-b.due):due();
+  if(!pool.length&&ahead)pool=S.words.slice().sort((a,b)=>a.ease-b.ease);
+  let p=pool.filter(w=>w.id!==lastId);if(!p.length)p=pool;
+  return p.length?{id:p[0].id}:null;
+}
+const first=x=>String(x||'').split(',')[0].trim();
+const ROOTX=['water','new','self','carry','break','see','sleep','all','across','bad'];
+function kinds(w){const k=[];if(w.sent&&w.sent.includes('___'))k.push('blank','usage');if(first(w.syn))k.push('syn');if(first(w.ant))k.push('ant');if((w.root||'').includes('='))k.push('root');return k}
+function mkX(w,k){
+  const all=[...S.words,...BANK],pool=[...new Set(all.map(x=>x.word))];
+  const dis=(ex,n)=>shuf(pool.filter(x=>!ex.includes(x))).slice(0,n);
+  const fill=x=>x.sent.split('___').join(w.word);
+  let pr,ans,opts;
+  if(k==='blank'){pr=`<div class="mut">Which word completes the sentence?</div><div class="scn">${esc(w.sent)}</div>`;ans=w.word;opts=[ans,...dis([ans],3)]}
+  else if(k==='syn'||k==='ant'){
+    ans=first(w[k]);
+    const ex=[w.word,ans,...String(w.syn||'').split(',').map(x=>x.trim()),...String(w.ant||'').split(',').map(x=>x.trim())];
+    pr=`<div class="mut">${k==='syn'?'Closest in meaning to':'Opposite in meaning to'}</div><div class="big">${esc(w.word)}</div>`;opts=[ans,...dis(ex,3)];
+  }
+  else if(k==='usage'){
+    ans=fill(w);
+    opts=[ans,...shuf(all.filter(x=>x.word!==w.word&&x.sent&&x.sent.includes('___'))).slice(0,2).map(fill)];
+    pr=`<div class="mut">Which sentence uses “${esc(w.word)}” correctly?</div>`;
+  }
+  else{
+    const r=w.root.split('=');ans=(r[1]||'').trim();
+    const ms=[...new Set([...all.filter(x=>x.root&&x.root.includes('=')).map(x=>x.root.split('=')[1].trim()),...ROOTX])].filter(x=>x&&x!==ans);
+    pr=`<div class="mut">“${esc(w.word)}” contains the root</div><div class="big">${esc(r[0].trim())}</div><div class="mut">What does it mean?</div>`;opts=[ans,...shuf(ms).slice(0,3)];
+  }
+  return{id:w.id,t:'x',k,pr,ans,opts:shuf(opts),done:false};
+}
+function mkQ(w){
+  if(!w.seen)return{id:w.id,t:'intro'};
+  const ks=kinds(w);
+  if(ks.length&&Math.random()<.55)return mkX(w,ks[Math.floor(Math.random()*ks.length)]);
+  const o=S.words.filter(x=>x.id!==w.id);
+  const t=(w.reps>=3||o.length<2)?'type':'mc';
+  const dirs=w.trig?['defword','trigword']:['defword'];
+  if(t==='mc')dirs.push('worddef');
+  const dir=dirs[Math.floor(Math.random()*dirs.length)];
+  return{id:w.id,t,dir,opts:t==='mc'?shuf([w,...shuf(o).slice(0,3)]).map(x=>x.id):null,done:false};
+}
+function focusBar(){
+  const on=foc.ids.length;
+  return `<div class="chips"><button class="chip ${!foc.tag&&!on?'on':''}" data-act="ftg" data-v="">All words</button>${tags().map(t=>`<button class="chip ${foc.tag===t&&!on?'on':''}" data-act="ftg" data-v="${esc(t)}">${esc(t)}</button>`).join('')}<button class="chip ${on?'on':''}" data-act="fpick">${on?'Picked ('+on+')':'Pick words'}</button></div>`;
+}
+function viewPick(){
+  return `<h2>Pick words to study</h2><p class="mut" style="margin-top:0">Tick the words you want in this session.</p>${S.words.slice().sort((a,b)=>a.word.localeCompare(b.word)).map(w=>`<label class="pk"><input type="checkbox" data-v="${w.id}"${foc.ids.includes(w.id)?' checked':''}><span><b>${esc(w.word)}</b> <span class="mut">${esc(w.def)}</span></span></label>`).join('')}<div class="row" style="margin-top:16px"><button class="btn" data-act="pgo">Study these</button><button class="btn ghost" data-act="pclr">Clear ticks</button></div>`;
+}
+function viewStudy(){if(picking)return viewPick();return (S.words.length?focusBar():'')+viewStudyInner()}
+function viewStudyInner(){
+  if(!S.words.length)return `<div class="panel empty"><h2>Nothing to study yet</h2><p class="mut">Log a few words, or add some from Discover.</p><button class="btn" data-act="tab" data-v="disc">Discover words</button></div>`;
+  if(!card||!cw()){card=nextCard();q=null}
+  if(!card){
+    const nx=Math.min(...S.words.map(w=>w.due));
+    return `<div class="panel empty"><h2>All caught up</h2><p class="mut">Next word is due ${rel(nx)}.</p><button class="btn ghost" data-act="ahead">Study ahead anyway</button></div>`;
+  }
+  const w=cw();
+  if(!q||q.id!==w.id)q=mkQ(w);
+  if(q.t==='intro')return `<div class="panel qc"><div class="mut">New word</div><div class="big">${esc(w.word)}</div><p class="scn">${esc(w.def)}</p>${w.trig?`<p class="trig">${esc(w.trig)}</p>`:''}${w.root?`<p class="mut">Root: ${esc(w.root.replace('=',' = '))}</p>`:''}</div><button class="btn" data-act="seen" style="width:100%">Got it, quiz me</button>`;
+  let pr,body='';
+  if(q.t==='x'){
+    pr=q.pr;
+    body=`<div class="opts">${q.opts.map((o,i)=>`<button class="opt${q.done?(o===q.ans?' ok':i===q.pick?' bad':''):''}" data-act="xpick" data-v="${i}"${q.done?' disabled':''}><b>${i+1}</b>${esc(o)}</button>`).join('')}</div>`;
+  }else{
+    pr=q.dir==='worddef'?`<div class="mut">What does this mean?</div><div class="big">${esc(w.word)}</div>`
+      :`<div class="mut">${q.dir==='trigword'?'Which word fits this moment?':'Which word matches this definition?'}</div><div class="scn">${esc(q.dir==='trigword'?w.trig:w.def)}</div>`;
+    if(q.t==='mc')body=`<div class="opts">${q.opts.map((id,i)=>{const x=S.words.find(y=>y.id===id);const c=q.done?(id===w.id?' ok':id===q.pick?' bad':''):'';return `<button class="opt${c}" data-act="pick" data-v="${id}"${q.done?' disabled':''}><b>${i+1}</b>${esc(q.dir==='worddef'?x.def:x.word)}</button>`}).join('')}</div>`;
+    else if(!q.done)body=`<input id="ta" placeholder="Type the word" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"><div class="row" style="margin-top:12px"><button class="btn" data-act="check">Check</button><button class="btn ghost" data-act="idk">I don’t know</button></div>`;
+  }
+  const al=q.t==='x'?q.ans:w.word;
+  const fb=q.done?`<div class="panel fb ${q.ok?'okp':'badp'}"><b>${q.ok?'Correct':'Not quite'}</b>${q.ok?'':` <span>The ${q.t==='x'?'answer':'word'} is <b>${esc(al)}</b>.</span>`}<p>${esc(w.def)}</p>${w.trig?`<p class="trig">${esc(w.trig)}</p>`:''}<button class="btn" data-act="next" style="width:100%">Next word</button></div>`:'';
+  return `<div class="panel qc">${pr}</div>${body}${fb}`;
+}
+function applyGrade(w,g){
+  const now=Date.now();
+  if(g<3){w.reps=0;w.int=0;w.due=now+6e4*(g===1?1:5)}
+  else{
+    w.reps++;
+    w.int=w.reps===1?1:w.reps===2?(g>=4?4:2):Math.max(w.int+1,Math.round(w.int*w.ease*(g===3?.85:g===5?1.15:1)));
+    w.due=now+w.int*864e5;
+  }
+  w.ease=Math.max(1.3,w.ease+(.1-(5-g)*(.08+(5-g)*.02)));
+  const k=dayKey(now);if(!S.days.includes(k))S.days.push(k);
+  save();
+}
+function answer(w,ok,g){q.done=true;q.ok=ok;applyGrade(w,g);render(1)}
+function check(skip){
+  const w=cw();if(!w||q.done)return;
+  const v=(($('#ta')||{}).value||'').trim().toLowerCase();
+  if(!skip&&!v){toast('Type your answer first');return}
+  const ok=!skip&&v===w.word.trim().toLowerCase();
+  answer(w,ok,ok?5:1);
+}
+function next(){lastId=card&&card.id;card=null;q=null;render()}
+
+/* ---------- Discover ---------- */
+const BANK=`ephemeral|lasting only a short time|A snowman melting by noon.|time|Online fame is often ___, gone within a week.|fleeting|permanent|hemer=day
+inevitable|certain to happen, unavoidable|Rain on the day you forgot an umbrella.|time|After months of delays, a change in plans was ___.|unavoidable|avoidable|
+obsolete|no longer used or needed|A phone charger for a device nobody owns.|time|Floppy disks are now completely ___.|outdated|current|
+ubiquitous|seeming to be everywhere at once|Seeing the same coffee chain on every corner.|time|Smartphones are ___ in modern cities.|omnipresent|rare|ubi=where
+laconic|using very few words|A friend who answers every question with “Fine.”|speech|His ___ reply was a single word: “No.”|terse|wordy|
+equivocate|to speak vaguely to avoid committing|A politician dodging a yes-or-no question.|speech|Stop trying to ___ and give me a straight answer.|hedge|commit|voc=voice
+candid|honest and straightforward|A friend telling you the draft needs work.|speech|I appreciate your ___ feedback, even though it stings.|frank|evasive|cand=white
+reticent|reluctant to share thoughts|Staying quiet in a meeting you know a lot about.|speech|She was ___ about her plans and told no one.|reserved|talkative|
+lucid|clear and easy to understand|A teacher’s explanation that finally clicks.|speech|The professor gave a ___ explanation of a hard idea.|clear|confusing|luc=light
+eloquent|fluent and persuasive in speaking|A speech that holds a whole room.|speech|Her ___ speech moved the whole audience.|articulate|inarticulate|loqu=speak
+tenacious|holding on firmly, refusing to give up|Retrying a hard problem for the fifth night.|character|A ___ researcher, he kept going after ten failed trials.|persistent|yielding|ten=hold
+ostentatious|showy in a way meant to impress|Wearing a gold watch to a picnic.|character|The ___ mansion had gold fountains on the lawn.|flashy|modest|
+meticulous|extremely careful about details|Proofreading an email three times.|character|A ___ editor, she caught every misplaced comma.|thorough|careless|
+sycophant|someone who flatters to gain favor|The coworker who laughs at every boss joke.|character|The manager was surrounded by a ___ who praised every idea.|flatterer|critic|
+benevolent|kind and wanting to do good|A neighbor who shovels your walk unasked.|character|The ___ donor funded scholarships every year.|kindly|malicious|bene=good
+gregarious|sociable, enjoying company|The person who knows everyone at the party.|character|He’s so ___ that he chats with every stranger.|sociable|solitary|greg=flock
+diligent|working carefully and steadily|Studying a little every single day.|character|A ___ student, she reviewed her notes nightly.|hardworking|lazy|
+pragmatic|focused on what works in practice|Choosing the cheaper tool that does the job.|thinking|Take a ___ approach and pick what actually works.|practical|idealistic|
+pernicious|slowly and subtly harmful|A habit that quietly wrecks your sleep.|thinking|Constant doomscrolling has a ___ effect on focus.|harmful|beneficial|nec=harm
+paradigm|a typical model or way of thinking|Everyone once assumed the sun circled Earth.|thinking|The discovery caused a ___ shift in biology.|model|exception|
+juxtapose|to place side by side for contrast|Hanging old and new photos of one street.|thinking|The exhibit will ___ old maps with satellite images.|contrast|separate|pos=place
+scrutinize|to examine very closely|Reading a contract line by line before signing.|thinking|Always ___ a contract before you sign it.|inspect|ignore|
+ambivalent|having mixed, conflicting feelings|Excited and dreading the same move.|feelings|I feel ___ about moving: thrilled and terrified.|conflicted|certain|ambi=both
+resilient|recovering quickly from difficulty|Bouncing back after a rejected application.|feelings|Children are often more ___ than adults expect.|tough|fragile|sil=leap
+nostalgia|a wistful longing for the past|A song that takes you back to middle school.|feelings|The old song filled her with ___.|wistfulness|anticipation|alg=pain
+apathy|lack of interest or concern|Not caring who wins the vote.|feelings|Voter ___ left the election with low turnout.|indifference|enthusiasm|path=feeling
+ameliorate|to make a bad situation better|Adding a bike lane to a dangerous road.|change|New policies aim to ___ working conditions.|improve|worsen|meli=better
+capricious|changing mood or mind suddenly|Weather that flips from sun to storm.|change|The king’s ___ moods made his court nervous.|fickle|steady|
+mitigate|to make less severe|Wearing a helmet to reduce injury.|change|Sandbags can help ___ flood damage.|lessen|worsen|
+volatile|likely to change suddenly or explode|A market that swings 5% in a day.|change|Oil prices have been ___ all year.|unstable|stable|vol=fly
+fain|gladly; willingly (archaic)|Wishing you could stay at a party but the last train is leaving.|archaic|I would ___ stay longer, but I must leave at dawn.|gladly|unwillingly|
+betwixt|between (archaic)|Stuck between two job offers and unable to choose.|archaic|The path ran ___ the river and the hill.|between|beyond|
+whence|from where (archaic)|Asking where a mysterious package came from.|archaic|He asked ___ the strange noise had come.|from where|whither|
+anon|soon; shortly (archaic)|Telling a friend “I’ll be there in a bit.”|archaic|I’ll see you ___, once the meeting ends.|shortly||
+ere|before (archaic)|Finishing chores before the guests arrive.|archaic|Finish your work ___ the sun sets.|before|after|
+perchance|perhaps (archaic)|Wondering aloud if it might rain later.|archaic|___ you have seen my lost keys?|perhaps|certainly|
+forsooth|truly, indeed (archaic, often used jokingly)|Teasing a friend in fake old-timey speech.|archaic|“___, this pizza is excellent,” he joked.|indeed||
+wherefore|why (archaic)|Asking why something happened, in Shakespeare’s voice.|archaic|“___ are you so late?” she asked.|why||
+yonder|over there, at a distance (archaic)|Pointing at a faraway tree on a hike.|archaic|Look at the barn on ___ hill.|distant|nearby|
+hark|to listen closely (archaic)|Calling everyone to listen as a song begins.|archaic|___! Do you hear the bells?|listen|ignore|
+groak|to silently watch someone eat, hoping to be offered some|Staring at a friend’s fries without saying a word.|specific|My dog will ___ at me until I share my sandwich.|||
+petrichor|the smell of rain on dry earth|The smell of a summer shower hitting hot pavement.|specific|After the drought broke, ___ filled the air.|||petr=stone
+apricity|the warmth of the sun in winter|Sitting by a window on a freezing, sunny day.|specific|We soaked up the ___ on the cold porch.|||
+aglet|the plastic tip of a shoelace|The little tip you thread through the eyelet.|specific|The ___ frayed, making the lace hard to thread.|||
+philtrum|the groove between the nose and upper lip|The small dent under your nose.|specific|The doctor pointed to the ___ on the diagram.|||
+tittle|the dot over a lowercase i or j|The tiny dot on top of an i.|specific|She added every ___ and crossed every t.|||
+defenestrate|to throw someone or something out of a window|Tossing a broken chair out a window.|specific|Angry at the noise, he threatened to ___ the radio.|||fenestr=window
+ultracrepidarian|someone who gives opinions on things they know nothing about|An uncle lecturing everyone on topics he has never studied.|specific|The ___ at dinner confidently explained surgery.|||
+besmirch|to soil, tarnish, or damage someone’s reputation|A rumor that unfairly ruins a coworker’s good name.|character|He tried to ___ her good name with false rumors.|tarnish|honor|
+beshrew|to invoke a mild curse upon someone (archaic)|Muttering “curse you” at a friend who beat you at a game.|archaic|“___ you for hiding my keys!” she laughed.|curse|bless|
+gainsay|to deny, contradict, or speak against|Disagreeing outright with a claim no one can disprove.|archaic|No one could ___ her expertise on the subject.|deny|affirm|
+quoth|said (archaic; used only in the first and third person)|Reciting a line from a famous old poem.|archaic|“I shall return,” ___ the knight.|said||
+caitiff|cowardly, despicable, or mean-spirited (archaic)|Calling out someone who ran from a fair fight.|archaic|The knight scorned the ___ lord who abandoned his men.|craven|brave|
+malapert|boldly disrespectful, impudent, or saucy (archaic)|A kid sassing a teacher to their face.|archaic|The ___ servant answered the king with a smirk.|impudent|respectful|
+overmorrow|the day after tomorrow (archaic)|Planning something for two days from now.|archaic|We leave ___, so pack tonight.|||
+poltroon|an utter coward (archaic)|Someone who hides when a real challenge appears.|archaic|The ___ hid behind the door while the others fought.|coward|hero|
+methinks|it seems to me (archaic)|Hedging a hunch about a friend’s plan.|archaic|___ the soup needs more salt.|I think||
+hither|to this place (archaic)|Waving someone over to where you stand.|archaic|Come ___ and look at this map.|here|thither|
+thither|to that place (archaic)|Pointing to a distant destination.|archaic|He walked ___ across the fields.|there|hither|
+thence|from that place (archaic)|Describing a route after a stop.|archaic|They sailed to Spain and ___ to Italy.|from there|hence|
+verily|truly, in truth (archaic)|Emphasizing a point in a grand way.|archaic|___, this is the best soup in the land.|truly||
+prithee|please; I pray thee (archaic)|Politely asking someone for a favor.|archaic|___, tell me the way to the castle.|please||
+nay|no; or rather (archaic)|Refusing an offer, or correcting yourself.|archaic|“___, I will not go,” he said.|no|aye|
+aught|anything (archaic)|Asking if there is anything to report.|archaic|Did you find ___ in the cellar?|anything|naught|
+haply|by chance; perhaps (archaic)|Wondering if luck might help.|archaic|___ we shall meet again someday.|perhaps||
+sirrah|a contemptuous way to address a man (archaic)|Barking at someone rude in a play.|archaic|“Be gone, ___!” the king shouted.|||
+ferrule|the metal band at the end of a pencil, cane, or tool handle|The little metal ring that holds a pencil’s eraser.|specific|The ___ keeps the eraser attached to the pencil.|||
+interrobang|a punctuation mark combining ? and !|Texting “What?!” in disbelief.|specific|She ended the text with an ___ to show shock.|||
+punt|the dimple in the bottom of a wine bottle|The dent you feel pushing on a wine bottle’s base.|specific|The sommelier pointed to the ___ at the bottle’s base.|||
+lunule|the pale half-moon at the base of a fingernail|The light crescent near your cuticle.|specific|The ___ is easiest to see on your thumbnail.|||lun=moon
+obelus|the division sign (÷)|The symbol on a calculator for dividing.|specific|The teacher drew an ___ on the board.|||
+crepuscular|relating to twilight, or active at dawn and dusk|Spotting deer at dusk.|specific|Deer are ___ animals, most active at dusk.|||
+tsundoku|buying books and letting them pile up unread|A growing stack of unread books on your nightstand.|specific|His ___ had grown into three towering stacks.|||
+hiraeth|a deep longing for a home that no longer exists (Welsh)|Missing a childhood home you can’t return to.|specific|She felt ___ whenever she smelled her grandmother’s kitchen.|||
+komorebi|sunlight filtering through tree leaves (Japanese)|Dappled light on a forest path.|specific|We walked in the ___ along the shaded trail.|||
+phosphene|the flash of light you see when pressing your closed eyes|Pressing your eyelids and seeing sparkles.|specific|Rubbing his eyes made a ___ bloom in the dark.|||phos=light
+mondegreen|a misheard word or lyric|Singing the wrong words to a song for years.|specific|Her ___ turned the lyric into nonsense.|||
+pluviophile|a lover of rain|Smiling when the first drops start falling.|specific|As a ___, she loved gray, rainy afternoons.|||pluvi=rain`.split('\n').map(l=>{const p=l.split('|');return{word:p[0],def:p[1],trig:p[2],tag:p[3],sent:p[4],syn:p[5],ant:p[6],root:p[7]||''}});
+function viewDisc(){
+  const have=new Set(S.words.map(w=>w.word.toLowerCase()));
+  const ok=b=>!have.has(b.word)&&!S.skip.includes(b.word);
+  const ts=[...new Set(BANK.map(b=>b.tag))];
+  const card=b=>`<div class="item"><h3>${esc(b.word)}</h3><p>${esc(b.def)}</p><p class="trig">${esc(b.trig)}</p><div class="meta"><span class="sp"></span><button class="btn ghost sm" data-act="dskip" data-v="${b.word}">Not interested</button><button class="btn sm" data-act="dadd" data-v="${b.word}">Add</button></div></div>`;
+  const sec=t=>{const l=BANK.filter(b=>b.tag===t&&ok(b));return l.length?`<h3 class="gh">${t} <span class="mut">· ${l.length} left</span></h3>`+l.slice(0,10).map(card).join(''):''};
+  const body=(dtag?[dtag]:ts).map(sec).join('');
+  return `<h2>Discover words</h2><p class="mut" style="margin-top:0">Ten suggestions per category. Add or skip a word and the next one slides up.</p>
+  <div class="chips"><button class="chip ${!dtag?'on':''}" data-act="dtag" data-v="">All</button>${ts.map(t=>`<button class="chip ${dtag===t?'on':''}" data-act="dtag" data-v="${t}">${t}</button>`).join('')}</div>
+  ${body||'<div class="empty mut">Nothing left here. Ask Claude for a new batch and paste it into Import in the Vault.</div>'}
+  ${S.skip.length?`<p style="text-align:center"><button class="btn ghost sm" data-act="dunskip">Bring back ${S.skip.length} skipped</button></p>`:''}`;
+}
+
+async function lookup(){
+  const w=$('#fw').value.trim().toLowerCase();if(!w){toast('Type a word first');return}
+  const b=$('#lk');b.disabled=true;b.textContent='Looking up…';
+  try{
+    const r=await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(w));
+    if(!r.ok)throw 0;
+    const m=(await r.json())[0].meanings||[],ds=m.flatMap(x=>x.definitions||[]);
+    const set=(id,v)=>{const e=$(id);if(v&&e&&!e.value.trim())e.value=v};
+    set('#fd',ds[0]&&ds[0].definition);
+    const ex=(ds.find(x=>x.example)||{}).example||'',i=ex.toLowerCase().indexOf(w);
+    if(i>=0)set('#fe',ex.slice(0,i)+'___'+ex.slice(i+w.length));
+    set('#fy',m.flatMap(x=>[...(x.synonyms||[]),...(x.definitions||[]).flatMap(y=>y.synonyms||[])])[0]);
+    set('#fa',m.flatMap(x=>[...(x.antonyms||[]),...(x.definitions||[]).flatMap(y=>y.antonyms||[])])[0]);
+    toast('Filled in what I found');
+  }catch(e){toast('No result (lookup works once hosted)')}
+  b.disabled=false;b.textContent='Look up definition';
+}
+
+/* ---------- Accounts ---------- */
+let user=null,isAdmin=false,admin=false,mode='in',aList=null,aData='',confirmU='';
+const ukey=n=>'lexicon.a.'+n.toLowerCase();
+async function api(path,opt){
+  const r=await fetch(path,Object.assign({credentials:'same-origin',headers:{'Content-Type':'application/json'}},opt));
+  let j={};try{j=await r.json()}catch(e){}
+  if(!r.ok)throw new Error(j.error||('Error '+r.status));
+  return j;
+}
+function fixup(){S.skip=S.skip||[];S.words.forEach(w=>{const b=BANK.find(x=>x.word===w.word);if(b&&!w.sent)Object.assign(w,{sent:b.sent,syn:b.syn,ant:b.ant,root:b.root})})}
+function enter(n,adm){
+  user=n;isAdmin=!!adm;KEY=ukey(n);admin=false;S={words:[],days:[],skip:[]};card=null;q=null;lastId=null;foc={tag:'',ids:[]};picking=false;tab='study';
+  load();fixup();render();sync();
+}
+async function sync(){
+  try{
+    const d=(await api('/api/data')).data;
+    if(d&&(d.u||0)>(S.u||0)){S=Object.assign({words:[],days:[],skip:[]},d);fixup();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}card=null;q=null;render(1)}
+    else if(S.words.length)push();
+  }catch(e){}
+}
+function push(){clearTimeout(push.t);push.t=setTimeout(()=>{if(user)api('/api/data',{method:'PUT',body:JSON.stringify({data:S})}).catch(()=>{})},1500)}
+async function auth(action){
+  const email=($('#em').value||'').trim(),password=$('#pw').value||'';
+  if(!email||!password){toast('Enter your email and password');return}
+  try{
+    const j=await api('/api/auth',{method:'POST',body:JSON.stringify({action,email,password})});
+    if(j.confirm){toast('Check your email to confirm, then log in');mode='in';render();return}
+    try{localStorage.setItem('lexicon.last',j.user.email)}catch(e){}
+    enter(j.user.email,j.user.admin);
+  }catch(e){toast(e.message)}
+}
+function logOut(){
+  api('/api/auth',{method:'POST',body:JSON.stringify({action:'logout'})}).catch(()=>{});
+  try{localStorage.removeItem('lexicon.last')}catch(e){}
+  user=null;KEY=null;isAdmin=false;card=null;q=null;admin=false;render();
+}
+async function openAdmin(){admin='panel';aList=null;aData='';render();try{aList=(await api('/api/admin')).users}catch(e){toast(e.message)}render(1)}
+async function boot(){
+  $('#main').innerHTML='<div class="empty mut">Loading…</div>';
+  try{const j=await api('/api/auth');if(j.user){try{localStorage.setItem('lexicon.last',j.user.email)}catch(e){}enter(j.user.email,j.user.admin)}else render()}
+  catch(e){let l=null;try{l=localStorage.getItem('lexicon.last')}catch(x){}if(l)enter(l,false);else render()}
+}
+function viewLogin(){
+  const up=mode==='up';
+  return `<div class="panel"><h2>${up?'Create your account':'Log in'}</h2>
+  <label>Email<input id="em" type="email" autocomplete="email" autocapitalize="off"></label>
+  <label>Password<input id="pw" type="password" autocomplete="${up?'new-password':'current-password'}"></label>
+  <div class="row"><button class="btn" data-act="${up?'su':'li'}">${up?'Create account':'Log in'}</button><button class="btn ghost" data-act="mode">${up?'I have an account':'Create new account'}</button></div></div>`;
+}
+function viewAdmin(){
+  return `<h2>Admin</h2><p class="mut" style="margin-top:0">Every account and its saved words.</p>${aList?aList.map(x=>`<div class="item"><h3>${esc(x.email)}</h3><p class="mut">${x.words} words · last saved ${x.updated?new Date(x.updated).toLocaleDateString():'never'}</p><div class="meta"><span class="sp"></span><button class="btn ghost sm" data-act="aview" data-v="${esc(x.id)}">View data</button><button class="btn ${confirmU===x.id?'bad':'ghost'} sm" data-act="adel" data-v="${esc(x.id)}">${confirmU===x.id?'Confirm clear':'Clear data'}</button></div></div>`).join(''):'<div class="empty mut">Loading…</div>'}${aData?`<textarea rows="8" readonly>${esc(aData)}</textarea>`:''}<div class="row" style="margin-top:14px"><button class="btn" data-act="aback">Back</button></div>`;
+}
+
+/* ---------- Events ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const a=b.dataset.act,v=b.dataset.v;
+  if(a==='tab'){tab=v;picking=false;if(v!=='log')editId=null;confirmId=null;render()}
+  else if(a==='save')saveWord();
+  else if(a==='cancel'){editId=null;tab='vault';render()}
+  else if(a==='addtag'){const i=$('#ft'),cur=i.value.split(',').map(t=>t.trim()).filter(Boolean);if(!cur.includes(v))cur.push(v);i.value=cur.join(', ')}
+  else if(a==='ftag'){vtag=v;$('#vt').innerHTML=chipsHTML();$('#list').innerHTML=listHTML()}
+  else if(a==='edit'){editId=v;tab='log';render()}
+  else if(a==='del'){
+    if(confirmId===v){S.words=S.words.filter(w=>w.id!==v);confirmId=null;save();toast('Word deleted');render()}
+    else{confirmId=v;$('#list').innerHTML=listHTML()}
+  }
+  else if(a==='seen'){const w=cw();if(w){w.seen=true;q=null;save();render()}}
+  else if(a==='pick'){if(q&&!q.done){const w=cw();q.pick=v;answer(w,v===w.id,v===w.id?4:1)}}
+  else if(a==='check'||a==='idk')check(a==='idk');
+  else if(a==='next')next();
+  else if(a==='dtag'){dtag=v;render(1)}
+  else if(a==='xpick'){if(q&&!q.done){const w=cw();q.pick=+v;const ok=q.opts[+v]===q.ans;answer(w,ok,ok?4:1)}}
+  else if(a==='lookup')lookup();
+  else if(a==='mode'){mode=mode==='up'?'in':'up';render()}
+  else if(a==='li')auth('login');
+  else if(a==='su')auth('signup');
+  else if(a==='switch')logOut();
+  else if(a==='adm')openAdmin();
+  else if(a==='aback'){admin=false;confirmU='';aData='';render()}
+  else if(a==='aview'){api('/api/admin?id='+encodeURIComponent(v)).then(j=>{aData=JSON.stringify(j.data);render(1)}).catch(e=>toast(e.message))}
+  else if(a==='adel'){if(confirmU===v){confirmU='';api('/api/admin?id='+encodeURIComponent(v),{method:'DELETE'}).then(()=>openAdmin()).catch(e=>toast(e.message))}else{confirmU=v;render(1)}}
+  else if(a==='ftg'){foc={tag:v,ids:[]};card=null;q=null;render()}
+  else if(a==='fpick'){picking=true;render()}
+  else if(a==='pclr')document.querySelectorAll('.pk input').forEach(i=>i.checked=false);
+  else if(a==='pgo'){const ids=[...document.querySelectorAll('.pk input:checked')].map(i=>i.dataset.v);if(!ids.length){toast('Tick at least one word');return}foc={tag:'',ids};picking=false;card=null;q=null;render()}
+  else if(a==='dskip'){S.skip.push(v);save();render(1)}
+  else if(a==='dunskip'){S.skip=[];save();render(1)}
+  else if(a==='dadd'){const b=BANK.find(x=>x.word===v);if(b){S.words.push({id:uid(),word:b.word,def:b.def,trig:b.trig,sent:b.sent,syn:b.syn,ant:b.ant,root:b.root,tags:[b.tag],ease:2.5,int:0,reps:0,due:Date.now(),created:Date.now()});save();toast('Added to your words');render(1)}}
+  else if(a==='ahead'){ahead=true;card=null;render()}
+  else if(a==='export'){
+    const t=$('#bk');t.value=JSON.stringify(S);t.focus();t.select();
+    try{navigator.clipboard.writeText(t.value).then(()=>toast('Copied'),()=>toast('Select and copy the text'))}catch(x){toast('Select and copy the text')}
+  }
+  else if(a==='import'){
+    try{
+      const o=JSON.parse($('#bk').value);if(!o||!Array.isArray(o.words))throw 0;
+      const have=new Set(S.words.map(w=>w.id)),hw=new Set(S.words.map(w=>w.word.toLowerCase()));let n=0;
+      o.words.forEach(w=>{if(w&&w.word&&w.def&&!hw.has(String(w.word).toLowerCase())&&!have.has(w.id)){S.words.push(Object.assign({id:uid(),tags:[],trig:'',ease:2.5,int:0,reps:0,due:Date.now()},w));n++}});
+      (o.days||[]).forEach(d=>{if(!S.days.includes(d))S.days.push(d)});
+      save();toast(n+' words imported');render();
+    }catch(x){toast('That backup text isn’t valid')}
+  }
+});
+document.addEventListener('input',e=>{if(e.target.id==='vs'){vq=e.target.value;$('#list').innerHTML=listHTML()}});
+document.addEventListener('keydown',e=>{
+  if(e.target.id==='em'||e.target.id==='pw'){if(e.key==='Enter'){const b=document.querySelector('[data-act=li],[data-act=su]');if(b)b.click()}return}
+  if(!user||tab!=='study'||!q)return;
+  if(e.target.id==='ta'){if(e.key==='Enter'){e.preventDefault();check(false)}return}
+  if(/INPUT|TEXTAREA/.test(e.target.tagName))return;
+  const c=x=>{const b=document.querySelector(x);if(b)b.click()};
+  if(e.key==='Enter'){e.preventDefault();c(q.done?'[data-act=next]':'[data-act=seen]')}
+  else if((q.t==='mc'||q.t==='x')&&!q.done&&e.key>='1'&&e.key<='4')c('.opt:nth-child('+e.key+')');
+});
+if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(()=>{});
+boot();
+</script>
+</body>
+</html>

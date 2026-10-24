@@ -1,0 +1,1 @@
+{"name":"lexicon-master-suite","private":true,"type":"module","dependencies":{"@netlify/identity":"latest","@netlify/database":"latest","pg":"latest"}}
